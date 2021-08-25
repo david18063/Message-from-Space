@@ -1,0 +1,115 @@
+# include "utility.h"
+
+int getLLBP(string message) // get Last Left Bracket Position
+{
+    for(int i=message.size()-1;i>=0;i--) if(message[i] == '[') return i;
+
+    cout<<"No corresponding left bracket!"<<endl;
+
+    exit(1);
+}
+
+int getFRBALLBP(string message) // get First Right Bracket After Last Left Bracket Position
+{
+    for(int i=getLLBP(message);i<message.size();i++) if(message[i] == ']') return i;
+
+    cout<<"No corresponding right bracket!"<<endl;
+
+    exit(1);
+}
+
+bool IsHasBrackets(string message)
+{
+    for(int i=0;i<message.size();i++) if(message[i] == '[' or message[i] == ']') return true;
+
+    return false;
+}
+
+bool IsNumber(char number)
+{
+    for(char c='1';c<='9';c++) if(c == number) return true;
+
+    return false;
+}
+
+bool IsSign(char sign)
+{
+    if(!IsNumber(sign)) return true;
+
+    return false;
+}
+
+bool IsContainsSign(string s)
+{
+    for(int i=0;i<s.size();i++) if(IsSign(s[i])) return true;
+
+    return false;
+}
+
+bool IsContainsNumber(string s)
+{
+    for(int i=0;i<s.size();i++) if(IsNumber(s[i])) return true;
+
+    return false;
+}
+
+string TranslateNumberAndString(string ns)
+{
+    string number = "";
+    string word = "";
+    string result = "";
+
+    if(!IsContainsNumber(ns)) {cout<<"Message in brackets does not contain a number!"<<endl; exit(1);}
+
+    if(!IsContainsSign(ns)) {cout<<"Message in brackets does not contain a sign!"<<endl; exit(1);}
+
+    if(!IsNumber(ns[0])) {cout<<"Message in brackets does not start with a number!"<<endl; exit(1);}
+
+    int i = 0;
+
+    while(IsNumber(ns[i])) {number += ns[i]; i++;}
+
+    while(i < ns.size()) {word += ns[i]; i++;}
+
+    for(int i=1;i<=ConvertStringToInt(number);i++) result += word;
+
+    return result;
+}
+
+string NextStep(string message)
+{
+    string s1 = "";
+    string s2 = "";
+    string s3 = "";
+    string result = "";
+
+    for(int i=0;i<getLLBP(message);i++) s1 += message[i];
+
+    for(int i=getLLBP(message)+1;i<getFRBALLBP(message);i++) s2 += message[i];
+
+    for(int i=getFRBALLBP(message)+1;i<message.size();i++) s3 += message[i];
+
+    s2 = TranslateNumberAndString(s2);
+
+    result = s1 + s2 + s3;
+
+    return result;
+}
+
+string TranslateSpaceMessage(string message)
+{
+    string result = message;
+
+    while(IsHasBrackets(result)) result = NextStep(result);
+
+    return result;
+}
+
+int main()
+{
+    string message = "IF[2E]LG[5O]D[3!]";
+
+    cout<<TranslateSpaceMessage(message)<<endl;
+
+    return 0;
+}
